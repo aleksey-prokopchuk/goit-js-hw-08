@@ -60,7 +60,7 @@ function onFormDataInput(event) {
 // Якщо там щось є заповнюємо Messege
 function populateTextaria() {
   const savedMessege = JSON.parse(localStorage.getItem(STOREGE_KEY));
-  if (savedMessege.message) {
+  if (savedMessege) {
     // console.log(savedMessege.message);
     refs.inputMessage.value = savedMessege.message;
   }
@@ -71,7 +71,7 @@ function populateTextaria() {
 function populateEmail() {
   const savedMessege = JSON.parse(localStorage.getItem(STOREGE_KEY));
 
-  if (savedMessege.email) {
+  if (savedMessege) {
     // console.log(savedMessege.email);
     refs.inputEmail.value = savedMessege.email;
   }
