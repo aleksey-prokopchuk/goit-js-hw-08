@@ -1,37 +1,35 @@
 import Player from '@vimeo/player';
-var throttle = require('lodash.throttle');
+const throttle = require('lodash.throttle');
 
-const refs = { iframe: document.querySelector('#vimeo-player') };
-const VIDEO_STORAGE_KEY = 'videoplayer-current-time';
-const player = new Player(refs.iframe);
+const iframe = document.querySelector('#vimeo-player');
+const player = new Player(iframe);
+const LOCAL_STORAGE = 'videoplayer-current-time';
+const currentTime = localStorage.getItem(LOCAL_STORAGE);
 
+// console.log(player);
+
+// Зберігаю час відтворення у локальне сховище
 const onPlay = function (data) {
-  localStorage.setItem(VIDEO_STORAGE_KEY, data.seconds); //записываем данные в хранилище
-  //   console.log(localStorage.getItem('videoplayer-current-time')); // проверка лодаша ) все гуд
+  localStorage.setItem(LOCAL_STORAGE, data.seconds);
+  // console.log('Збережений час відтворення у локальному сховищі', data.seconds);
 };
 
-const optimizedOnPlay = throttle(onPlay, 1000);
-player.on('timeupdate', optimizedOnPlay);
-// гайд который мне помог https://habr.com/ru/post/647359/
+// Відновлюю час відтворення зі збереженої позиції з локального сховища
+player
+  .setCurrentTime(currentTime)
+  .then(function (seconds) {
+    // seconds = the actual time that the player seeked to
+  })
+  .catch(function (error) {
+    switch (error.name) {
+      case 'RangeError':
+        // the time was less than 0 or greater than the video’s duration
+        break;
 
-const setTime = localStorage.getItem(VIDEO_STORAGE_KEY);
-if (setTime) {
-  //правка касаемо записаного времени
-  player
-    .setCurrentTime(setTime)
-    .then(function (seconds) {
-      // получаем данные с хранилища
-      // seconds = the actual time that the player seeked to
-    })
-    .catch(function (error) {
-      switch (error.name) {
-        case 'RangeError':
-          // the time was less than 0 or greater than the video’s duration
-          break;
+      default:
+        // some other error occurred
+        break;
+    }
+  });
 
-        default:
-          // some other error occurred
-          break;
-      }
-    });
-}
+player.on('timeupdate', throttle(onPlay, 1000));
