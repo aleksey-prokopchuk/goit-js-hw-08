@@ -8,7 +8,7 @@ const refs = {
   inputMessage: document.querySelector('textarea'),
 };
 
-const inputFormData = {};
+let inputFormData = {};
 
 refs.form.addEventListener('submit', onFormSubmit);
 // throttle зберігає кожні 500 ms
@@ -22,6 +22,7 @@ initForm();
 function onFormSubmit(event) {
   event.preventDefault();
   console.log('Форма надіслана');
+  inputFormData = {};
   event.currentTarget.reset();
   localStorage.removeItem(STOREGE_KEY);
 }
